@@ -1,0 +1,178 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Вход{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-login:active {
+        transform: translateY(0);
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid;
+    }
+
+    .alert-info {
+        background-color: #e3f2fd;
+        border-color: #2196f3;
+        color: #1976d2;
+    }
+
+    .alert-error {
+        background-color: #ffebee;
+        border-color: #f44336;
+        color: #d32f2f;
+    }
+
+    .login-links {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .login-links a {
+        color: #667eea;
+        text-decoration: none;
+        margin: 0 10px;
+        transition: color 0.3s ease;
+    }
+
+    .login-links a:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+
+    .already-logged-in {
+        text-align: center;
+        padding: 40px;
+    }
+
+    .already-logged-in p {
+        margin-bottom: 20px;
+        font-size: 18px;
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    {% if user.is_authenticated %}
+        <div class="already-logged-in">
+            <p>🎉 Вы уже находитесь в своём аккаунте.</p>
+            <div class="login-links">
+                <a href="{% url 'app_counter:index' %}" class="btn-login" style="display: inline-block; width: auto; padding: 10px 20px; margin: 5px;">
+                    На главную
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <h1 class="login-title">🔐 Вход в систему</h1>
+
+        {% if form.errors %}
+            <div class="alert alert-error">
+                ❌ Ваши логин и пароль не подходят. Попробуйте заново.
+            </div>
+        {% endif %}
+
+        {% if next %}
+            <div class="alert alert-info">
+                🔒 Войдите, чтобы увидеть эту страницу.
+            </div>
+        {% endif %}
+
+        <form action="{% url 'app_accounts:login' %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_username">👤 Имя пользователя</label>
+                <input type="text" name="username" id="id_username" class="form-input" placeholder="Введите ваш логин" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">🔒 Пароль</label>
+                <input type="password" name="password" id="id_password" class="form-input" placeholder="Введите ваш пароль" required>
+            </div>
+
+            <button type="submit" class="btn-login">
+                🚀 Войти
+            </button>
+
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+
+        <div class="login-links">
+            {# Раскомментируйте когда добавите функционал #}
+            {# <a href="{% url 'app_accounts:password_reset' %}">🔓 Забыли пароль?</a> #}
+            {# <a href="#">📝 Регистрация</a> #}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
